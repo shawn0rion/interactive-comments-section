@@ -1,0 +1,22 @@
+:root {
+  --message-offset: 88px;
+}
+.message {
+  list-style: none;
+  font-size: 1.1rem;
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+}
+.reply {
+  position: relative;
+}
+
+.reply::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 2px;
+  left: -20px;
+  background-color: gray;
+}
