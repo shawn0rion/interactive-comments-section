@@ -48,17 +48,89 @@ class Message {
   }
 }
 
+// from parent message, insert a message below and one level deeper
+function renderReplyTextarea(parentMessageEl, parentMessage) {
+  const messages = document.querySelector("#messages");
+
+  // remove any existing active replies
+  const activeReply = document.querySelector(".reply.active");
+  if (activeReply !== null) messages.removeChild(activeReply);
+
+  const newNestedLevel = parentMessage.nestedLevel + 1;
+  const li = document.createElement("li");
+  li.classList.add("message", "reply", "active");
+  li.style.marginLeft = `calc(var(--message-offset) * ${newNestedLevel})`;
+
+  const textarea = document.createElement("textarea");
+  textarea.id = "reply-input";
+
+  const buttonContainer = document.createElement("div");
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.classList.add("cancel-button");
+  buttonContainer.appendChild(cancelButton);
+
+  const replyButton = document.createElement("button");
+  replyButton.textContent = "Reply";
+  replyButton.classList.add("reply-button");
+
+  buttonContainer.appendChild(replyButton);
+  li.appendChild(textarea);
+  li.appendChild(buttonContainer);
+  messages.insertBefore(li, parentMessageEl.nextSibling);
+  // create cancel button
+  // create reply button
+  // add event listeners
+  cancelButton.addEventListener("click", (event) => {
+    messages.removeChild(li);
+  });
+  replyButton.addEventListener("click", (event) => {
+    // this user1 will be replaced by currentUser
+    user1.sendReply(parentMessage, textarea.value);
+    messages.removeChild(li);
+  });
+}
+
 function renderMessage(message) {
   const messages = document.querySelector("#messages");
   const li = document.createElement("li");
   // add classes to message
   li.className = "message";
-  message.parent !== "" ? li.classList.add("reply") : "";
-  li.textContent = message.user.name + ": " + message.text;
-  // offset message foreach nested level
   li.style.marginLeft = `calc(var(--message-offset) * ${message.nestedLevel})`;
+  message.parent !== "" ? li.classList.add("reply") : "";
 
-  messages.appendChild(li);
+  const userDetails = document.createElement("div");
+  const username = document.createElement("span");
+  const messageText = document.createElement("p");
+
+  userDetails.classList.add("user-details");
+  username.classList.add("username");
+  messageText.classList.add("message-text");
+
+  username.textContent = message.user.name;
+  messageText.textContent = message.text;
+
+  userDetails.appendChild(username);
+  li.appendChild(userDetails);
+  li.appendChild(messageText);
+  // temporary reply event listener
+  li.addEventListener("click", (e) => {
+    renderReplyTextarea(e.currentTarget, message);
+  });
+
+  // handle reply
+  if (message.parent !== "") {
+    const listItems = document.querySelectorAll(".message");
+    const parentMessageEl = [...listItems].find(
+      (x) =>
+        x.querySelector(".message-text").textContent === message.parent.text
+    );
+    messages.insertBefore(li, parentMessageEl.nextSibling);
+  } else {
+    // handle message
+    messages.appendChild(li);
+  }
 }
 
 // Creating a few users

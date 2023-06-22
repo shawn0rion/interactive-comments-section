@@ -1,21 +1,39 @@
 :root {
+  --message-gap: 10px;
   --message-offset: 88px;
 }
+
+#messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .message {
   list-style: none;
   font-size: 1.1rem;
   padding: 20px 10px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: start;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
 }
 .reply {
   position: relative;
 }
 
+#reply-input {
+  width: 100%;
+  height: 80px;
+}
+
 .reply::before {
   content: "";
   position: absolute;
-  height: 100%;
+  top: calc(-1 * var(--message-gap));
+  height: calc(100% + var(--message-gap));
   width: 2px;
   left: -20px;
   background-color: gray;
